@@ -1,10 +1,11 @@
 {
-  "name": "bubbookz-backend",
+  "name": "magtech-backend",
   "version": "1.0.0",
   "description": "Backend to the bubbookz frontend",
   "main": "server.js",
   "scripts": {
-    "server": "nodemon server.js"
+    "server": "nodemon server.js",
+    "start": "node server.js"
   },
   "repository": {
     "type": "git",
