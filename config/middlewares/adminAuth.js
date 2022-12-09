@@ -13,10 +13,10 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.addSuperUser = exports.authenticateAdmin = void 0;
-const bcrypt_1 =require("bcrypt");
+const bcrypt_1 = __importDefault(require("bcrypt"));
 const uuid_1 = require("uuid");
 const Queries_1 = require("../services/Queries");
-const admins_1 = require("../models/sql/admins");
+const admins_1 = require("../models/mongo_db/admins");
 const authenticateAdmin = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     if (req.session.admin) {
         return next();
@@ -29,9 +29,9 @@ const authenticateAdmin = (req, res, next) => __awaiter(void 0, void 0, void 0, 
 exports.authenticateAdmin = authenticateAdmin;
 function addSuperUser() {
     return __awaiter(this, void 0, void 0, function* () {
-        const query = new Queries_1.SQLQuery(admins_1.AdminModel);
+        const query = new Queries_1.MongoQuery(admins_1.AdminModel);
         const { res } = yield query.findAll();
-        if ((res === null || res === void 0 ? void 0 : res.length) !== 0) {
+        if (res.length !== 0) {
             return "Superuser exists";
         }
         const admin = {
@@ -41,7 +41,7 @@ function addSuperUser() {
         try {
             const salt = yield bcrypt_1.default.genSalt();
             const env_password = admin.password;
-            const hashed = yield bcrypt_1.hash(env_password, salt);
+            const hashed = yield bcrypt_1.default.hash(env_password, salt);
             yield query.createRecord({
                 username: admin.username,
                 password: hashed,

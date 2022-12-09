@@ -10,13 +10,13 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.findUser = void 0;
-const user_1 = require("../models/sql/user");
+const user_1 = require("../models/mongo_db/user");
 const Queries_1 = require("../services/Queries");
 function findUser(route) {
     if (route === "login") {
         return (req, res, next) => __awaiter(this, void 0, void 0, function* () {
             const { phone } = req.body;
-            const query = new Queries_1.SQLQuery(user_1.User);
+            const query = new Queries_1.MongoQuery(user_1.User);
             try {
                 const userExist = yield query.find({ phone_no: phone });
                 if (userExist.res) {
@@ -39,7 +39,7 @@ function findUser(route) {
     return (req, res, next) => __awaiter(this, void 0, void 0, function* () {
         const { phone: phone_no, username } = req.body;
         console.log(req.body);
-        const query = new Queries_1.SQLQuery(user_1.User);
+        const query = new Queries_1.MongoQuery(user_1.User);
         try {
             const userExist = yield query.find({ $or: [{ phone_no }, { username }] });
             if (!userExist.res) {

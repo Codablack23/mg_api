@@ -17,7 +17,7 @@ const bcrypt_1 = __importDefault(require("bcrypt"));
 const uuid_1 = require("uuid");
 const user_1 = require("../config/models/mongo_db/user");
 const Queries_1 = require("../config/services/Queries");
-const bots_1 = require("../config/models/sql/bots");
+const bots_1 = require("../config/models/mongo_db/bots");
 function loginHandler(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
         const { phone, password } = req.body;
@@ -25,7 +25,7 @@ function loginHandler(req, res) {
             status: "pending",
             error: "process is still pending"
         };
-        const query = new Queries_1.SQLQuery(user_1.User);
+        const query = new Queries_1.MongoQuery(user_1.User);
         try {
             const userExist = yield query.find({ phone_no: phone });
             const { res: user } = userExist;
@@ -82,7 +82,7 @@ function resetPassword(req, res) {
         };
         const { username } = req.session.user;
         const { new_password } = req.body;
-        const query = new Queries_1.SQLQuery(user_1.User);
+        const query = new Queries_1.MongoQuery(user_1.User);
         try {
             yield query.updateOne({ username }, { password: new_password });
             response.status = "success";
@@ -105,8 +105,8 @@ function registerHandler(req, res) {
         };
         const { name, phone, password, username } = req.body;
         console.log(req.body, "regHandler");
-        const query = new Queries_1.SQLQuery(user_1.User);
-        const refQuery = new Queries_1.SQLQuery(bots_1.Refferal);
+        const query = new Queries_1.MongoQuery(user_1.User);
+        const refQuery = new Queries_1.MongoQuery(bots_1.Refferral);
         try {
             const salt = yield bcrypt_1.default.genSalt();
             console.log(uuid_1.v4);

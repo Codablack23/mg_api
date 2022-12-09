@@ -16,14 +16,14 @@ exports.getAdmins = exports.getWithdrawals = exports.getExchanges = exports.upda
 const admins_1 = require("../config/models/mongo_db/admins");
 const user_1 = require("../config/models/mongo_db/user");
 const Queries_1 = require("../config/services/Queries");
-const bcrypt_1 = require("bcrypt");
+const bcrypt_1 = __importDefault(require("bcrypt"));
 const uuid_1 = require("uuid");
 const payments_1 = require("../config/models/mongo_db/payments");
-const bots_1 = require("../config/models/sql/bots");
+const bots_1 = require("../config/models/mongo_db/bots");
 function getUsers(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
-        const refQuery = new Queries_1.SQLQuery(bots_1.Refferal);
-        const query = new Queries_1.SQLQuery(user_1.User);
+        const refQuery = new Queries_1.MongoQuery(bots_1.Refferral);
+        const query = new Queries_1.MongoQuery(user_1.User);
         const result = {
             status: "pending",
             err: "",
@@ -32,7 +32,7 @@ function getUsers(req, res) {
             const { res: users } = yield query.findAll();
             const { res: refs } = yield refQuery.findAll();
             result.status = "success";
-            result.users = users === null || users === void 0 ? void 0 : users.map((user) => {
+            result.users = users.map((user) => {
                 return {
                     username: user.username,
                     name: user.name,
@@ -53,7 +53,7 @@ function getUsers(req, res) {
 exports.getUsers = getUsers;
 function getInvestments(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
-        const query = new Queries_1.SQLQuery(bots_1.Investment);
+        const query = new Queries_1.MongoQuery(bots_1.Investment);
         const result = {
             status: "pending",
             err: "",
@@ -73,7 +73,7 @@ function getInvestments(req, res) {
 exports.getInvestments = getInvestments;
 function getPayments(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
-        const query = new Queries_1.SQLQuery(payments_1.Payment);
+        const query = new Queries_1.MongoQuery(payments_1.Payment);
         const result = {
             status: "pending",
             err: "",
@@ -97,7 +97,7 @@ function addAdmin(req, res) {
             status: "pending",
             err: "",
         };
-        const query = new Queries_1.SQLQuery(admins_1.AdminModel);
+        const query = new Queries_1.MongoQuery(admins_1.AdminModel);
         const { username } = req.body;
         try {
             const salt = yield bcrypt_1.default.genSalt();
@@ -122,7 +122,7 @@ function addAdmin(req, res) {
 exports.addAdmin = addAdmin;
 function loginAdmin(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
-        const query = new Queries_1.SQLQuery(admins_1.AdminModel);
+        const query = new Queries_1.MongoQuery(admins_1.AdminModel);
         const { username, password } = req.body;
         let result = {
             status: "",
@@ -131,7 +131,7 @@ function loginAdmin(req, res) {
         try {
             const { success, res: user } = yield query.find({ username: username });
             if (success) {
-                const checkDetail = yield bcrypt_1.compare(password, user.password);
+                const checkDetail = yield bcrypt_1.default.compare(password, user.password);
                 if (checkDetail) {
                     req.session.admin = { username };
                     req.session.admin.admin_id = user.admin_id;
@@ -158,7 +158,7 @@ function loginAdmin(req, res) {
 exports.loginAdmin = loginAdmin;
 function updateExchange(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
-        const query = new Queries_1.SQLQuery(admins_1.Exchange);
+        const query = new Queries_1.MongoQuery(admins_1.Exchange);
         const { rate, type, conversion } = req.body;
         console.log(req.body);
         const result = {
@@ -186,7 +186,7 @@ function updateExchange(req, res) {
 exports.updateExchange = updateExchange;
 function getExchanges(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
-        const query = new Queries_1.SQLQuery(admins_1.Exchange);
+        const query = new Queries_1.MongoQuery(admins_1.Exchange);
         const result = {
             status: "pending",
             error: "no response yet"
@@ -207,7 +207,7 @@ function getExchanges(req, res) {
 exports.getExchanges = getExchanges;
 function getWithdrawals(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
-        const query = new Queries_1.SQLQuery(payments_1.Withdrawal);
+        const query = new Queries_1.MongoQuery(payments_1.Withdrawal);
         const result = {
             status: "pending",
             err: "",
@@ -227,7 +227,7 @@ function getWithdrawals(req, res) {
 exports.getWithdrawals = getWithdrawals;
 function getAdmins(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
-        const query = new Queries_1.SQLQuery(admins_1.AdminModel);
+        const query = new Queries_1.MongoQuery(admins_1.AdminModel);
         const result = {
             status: "pending",
             err: "",
@@ -235,7 +235,7 @@ function getAdmins(req, res) {
         try {
             const { res: admins } = yield query.findAll({ isSuperUser: false });
             result.status = "completed";
-            result.admins = admins === null || admins === void 0 ? void 0 : admins.map((user) => {
+            result.admins = admins.map((user) => {
                 return {
                     username: user.username,
                     admin_id: user.admin_id,

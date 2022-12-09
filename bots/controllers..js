@@ -14,10 +14,10 @@ const bots_1 = require("../config/models/mongo_db/bots");
 const payments_1 = require("../config/models/mongo_db/payments");
 const Queries_1 = require("../config/services/Queries");
 const uuid_1 = require("uuid");
-const user_1 = require("../config/models/sql/user");
+const user_1 = require("../config/models/mongo_db/user");
 function getInvestments(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
-        const query = new Queries_1.SQLQuery(bots_1.Investment);
+        const query = new Queries_1.MongoQuery(bots_1.Investment);
         const { user } = req.session;
         const result = {
             status: "pending",
@@ -38,7 +38,7 @@ function getInvestments(req, res) {
 exports.getInvestments = getInvestments;
 function getBots(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
-        const query = new Queries_1.SQLQuery(bots_1.Bot);
+        const query = new Queries_1.MongoQuery(bots_1.Bot);
         const { user } = req.session;
         const result = {
             status: "pending",
@@ -60,10 +60,10 @@ exports.getBots = getBots;
 function invest(req, res) {
     var _a, _b, _c, _d, _e, _f, _g;
     return __awaiter(this, void 0, void 0, function* () {
-        const investmentQuery = new Queries_1.SQLQuery(bots_1.Investment);
-        const refQuery = new Queries_1.SQLQuery(bots_1.Refferral);
-        const userQuery = new Queries_1.SQLQuery(user_1.User);
-        const botQuery = new Queries_1.SQLQuery(bots_1.Bot);
+        const investmentQuery = new Queries_1.MongoQuery(bots_1.Investment);
+        const refQuery = new Queries_1.MongoQuery(bots_1.Refferral);
+        const userQuery = new Queries_1.MongoQuery(user_1.User);
+        const botQuery = new Queries_1.MongoQuery(bots_1.Bot);
         const { amount, bot_id } = req.body;
         const date = new Date();
         const result = {
@@ -90,7 +90,7 @@ function invest(req, res) {
                     returns: (percent * duration) * amount,
                     expires: expires.toDateString()
                 });
-                if (user.reffered && (all_investment === null || all_investment === void 0 ? void 0 : all_investment.length) === 0) {
+                if (user.reffered && all_investment.length === 0) {
                     yield refQuery.updateOne({ first_gen: (_e = req.session.user) === null || _e === void 0 ? void 0 : _e.username }, { $inc: { amount: (parseFloat(amount) / duration) * 0.20 } });
                     yield refQuery.updateOne({ second_gen: (_f = req.session.user) === null || _f === void 0 ? void 0 : _f.username }, { $inc: { amount: (parseFloat(amount) / duration) * 0.03 } });
                 }
@@ -103,7 +103,7 @@ function invest(req, res) {
                     amount,
                     bot_id,
                     expires: expires.toDateString(),
-                    percentage_profit: bot === null || bot === void 0 ? void 0 : bot.percentage_profit,
+                    percentage_profit: bot.percentage_profit,
                 };
             }
             else {
@@ -123,7 +123,7 @@ exports.invest = invest;
 function paymentHandler(req, res) {
     var _a;
     return __awaiter(this, void 0, void 0, function* () {
-        const query = new Queries_1.SQLQuery(payments_1.Payment);
+        const query = new Queries_1.MongoQuery(payments_1.Payment);
         const { description, amount } = req.body;
         const result = {
             status: "pending",
@@ -152,7 +152,7 @@ function paymentHandler(req, res) {
 exports.paymentHandler = paymentHandler;
 function updatePayment(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
-        const query = new Queries_1.SQLQuery(payments_1.Payment);
+        const query = new Queries_1.MongoQuery(payments_1.Payment);
         const result = {
             status: "pending",
             error: ""
@@ -183,7 +183,7 @@ exports.updatePayment = updatePayment;
 function buyBot(req, res) {
     var _a;
     return __awaiter(this, void 0, void 0, function* () {
-        const query = new Queries_1.SQLQuery(bots_1.Bot);
+        const query = new Queries_1.MongoQuery(bots_1.Bot);
         const { percent_profit, bot_name, bot_price } = req.body;
         let date = new Date();
         const duration = 90;
@@ -229,7 +229,7 @@ function getPayments(req, res) {
             err: "",
         };
         try {
-            const query = new Queries_1.SQLQuery(payments_1.Payment);
+            const query = new Queries_1.MongoQuery(payments_1.Payment);
             const { res: payments } = yield query.findAll({ username: (_a = req.session.user) === null || _a === void 0 ? void 0 : _a.username });
             result.status = "completed";
             result.payments = payments;
@@ -245,7 +245,7 @@ exports.getPayments = getPayments;
 function getRefs(req, res) {
     var _a;
     return __awaiter(this, void 0, void 0, function* () {
-        const query = new Queries_1.SQLQuery(bots_1.Refferral);
+        const query = new Queries_1.MongoQuery(bots_1.Refferral);
         const result = {
             status: "pending",
             err: ""
@@ -266,7 +266,7 @@ function getRefs(req, res) {
 exports.getRefs = getRefs;
 function deletePayment(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
-        const query = new Queries_1.SQLQuery(payments_1.Payment);
+        const query = new Queries_1.MongoQuery(payments_1.Payment);
         const response = {
             status: "pending",
             err: "pending"

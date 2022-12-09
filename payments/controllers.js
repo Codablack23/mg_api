@@ -11,13 +11,13 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.makeWithdrawal = exports.getWithdrawals = void 0;
 const uuid_1 = require("uuid");
-const payments_1 = require("../config/models/sql/payments");
+const payments_1 = require("../config/models/mongo_db/payments");
 const Queries_1 = require("../config/services/Queries");
 const withdraw_1 = require("../config/services/withdraw");
 function getWithdrawals(req, res) {
     var _a;
     return __awaiter(this, void 0, void 0, function* () {
-        const query = new Queries_1.SQLQuery(payments_1.Withdrawal);
+        const query = new Queries_1.MongoQuery(payments_1.Withdrawal);
         const username = (_a = req.session.user) === null || _a === void 0 ? void 0 : _a.username;
         const result = {
             status: "pending",
@@ -40,7 +40,7 @@ exports.getWithdrawals = getWithdrawals;
 function makeWithdrawal(req, res) {
     var _a;
     return __awaiter(this, void 0, void 0, function* () {
-        const query = new Queries_1.SQLQuery(payments_1.Withdrawal);
+        const query = new Queries_1.MongoQuery(payments_1.Withdrawal);
         const { amount } = req.body;
         const username = (_a = req.session.user) === null || _a === void 0 ? void 0 : _a.username;
         const result = {

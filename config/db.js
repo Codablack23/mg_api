@@ -1,7 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.sequelize = void 0;
-const sequelize_1 = require("sequelize");
+const { Sequelize } = require("sequelize");
 const dotenv = require("dotenv").config();
 const dbConfig = {
     user: process.env.DB_USER,
@@ -13,4 +13,4 @@ const db = {
     dialect: "mysql",
     host: "localhost"
 };
-exports.sequelize = new sequelize_1.Sequelize('magtech', dbConfig.user, dbConfig.password, db);
+exports.sequelize = new Sequelize('magtech', dbConfig.user, dbConfig.password, db);

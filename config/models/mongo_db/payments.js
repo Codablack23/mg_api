@@ -59,10 +59,6 @@ exports.Withdrawal = (0, mongoose_1.model)("withdrawals", new mongoose_1.Schema(
 // postal_code,
 // city,
 exports.AccountDetails = (0, mongoose_1.model)("account_details", new mongoose_1.Schema({
-    username: {
-        type: String,
-        required: true,
-    },
     account_name: {
         type: String,
         required: true

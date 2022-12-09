@@ -17,14 +17,14 @@ const user_1 = require("../models/mongo_db/user");
 const Queries_1 = require("../services/Queries");
 const bcrypt_1 = __importDefault(require("bcrypt"));
 const uuid_1 = require("uuid");
-const bots_1 = require("../models/sql/bots");
+const bots_1 = require("../models/mongo_db/bots");
 function checkRef(req, res, next) {
     return __awaiter(this, void 0, void 0, function* () {
         const { refcode } = req.body;
         if (!refcode) {
             return next();
         }
-        const query = new Queries_1.SQLQuery(user_1.User);
+        const query = new Queries_1.MongoQuery(user_1.User);
         const { success } = yield query.find({ ref_code: refcode });
         if (success) {
             return next();
@@ -44,8 +44,8 @@ function addUserWithRefCode(req, res, next) {
             error: "process is still pending",
         };
         const { name, phone, password, username, refcode: ref } = req.body;
-        const query = new Queries_1.SQLQuery(user_1.User);
-        const refQuery = new Queries_1.SQLQuery(bots_1.Refferal);
+        const query = new Queries_1.MongoQuery(user_1.User);
+        const refQuery = new Queries_1.MongoQuery(bots_1.Refferral);
         if (!ref) {
             return next();
         }
